@@ -1,0 +1,44 @@
+<!--
+Copyright (c) 2016 The Ayla Project Authors.
+This code may only be used under the MIT style license found at http://aylaweb.github.io/LICENSE.txt
+The complete set of authors may be found at http://aylaweb.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://aylaweb.github.io/CONTRIBUTORS.txt
+-->
+
+<link rel="import" href="../polymer/polymer.html">
+
+<script>
+    Ayla = window.Ayla || {};
+    Ayla.VipOnOffBehavior = {
+        properties: {
+            onOffSource: {
+                type: String,
+                notify: true
+            }
+        },
+        created: function () {
+            console.log(this.id + " -> vip-seek-time -> Event created");
+        },
+        attached: function () {
+            console.log(this.id + " -> vip-seek-time -> Event attached");
+        },
+        ready: function () {
+            console.log(this.id + " -> vip-seek-time -> Event ready");
+            this.async(this._innerRule.bind(this));
+        },
+        _innerRule: function () {
+            var ruleOnSource = {};
+            ruleOnSource.when = this.onOffSource + ".playing";
+            ruleOnSource.do = (this.localName.indexOf("-animation") >= 0) ? "(transducers.filter (x => x && (this.currentTime < (this._animation.effect.timing.duration))))" : "(transducers.filter (x => x))";
+            ruleOnSource.then = "{this.play()}";
+            this.rules = this.rules || [];
+            this.push('rules', ruleOnSource);
+            var ruleOffSource = {};
+            ruleOffSource.when = this.onOffSource + ".playing";
+            ruleOffSource.do = "(transducers.filter (x => !x))";
+            ruleOffSource.then = "{this.pause()}";
+            this.rules = this.rules || [];
+            this.push('rules', ruleOffSource);         
+        }
+    };
+</script>
